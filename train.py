@@ -82,11 +82,15 @@ def main(inpath: str):
             break
 
     progress.close()
+    print("Writing vocab.json...")
     with open('vocab.json', 'w') as outfile:
         json.dump(vocab, outfile)
+    print("Writing vectors_out.sqlite...")
     conn.commit()
+    print("Writing embeddings_out.txt...")
     pandas.DataFrame.from_dict(vectors, orient='index') \
         .to_csv('embeddings_out.txt', header=None, sep=" ", quoting=csv.QUOTE_NONE)
+    print("Done!")
 
 
 if __name__ == '__main__':
