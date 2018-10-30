@@ -8,6 +8,7 @@ from gensim.models import FastText
 import pandas
 import sqlite3
 import csv
+import json
 
 REGEX_MATCH_PATTERN = os.getenv("REGEX_MATCH_PATTERN", r"[\w']+|[,\.\?!;\-\(\)]")
 VOCAB_SIZE = int(os.getenv("VOCAB_SIZE", 100_000))
