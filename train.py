@@ -43,7 +43,7 @@ def main(inpath: str):
     conn.execute('INSERT INTO vector_meta VALUES (?, ?, ?)',
                  ('float32', EMBED_DIM, VOCAB_SIZE))
     conn.execute('CREATE TABLE vectors (token text primary key, vector_bytes blob);')
-    conn.execute('CREATE TABLE frequencies (token text primary key, cout integer);')
+    conn.execute('CREATE TABLE frequencies (token text primary key, count integer);')
 
     print(f"Loaded {sum(token_counts.values())} words.  Training model...")
 
