@@ -56,7 +56,7 @@ def main(inpath: str):
         alpha=0.1,
         sg=1,
         sorted_vocab=1,
-        iter=1,
+        iter=10,
         workers=8,
     )
     
