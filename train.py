@@ -14,6 +14,7 @@ REGEX_MATCH_PATTERN = os.getenv("REGEX_MATCH_PATTERN", r"[\w']+|[,\.\?!;\-\(\)]"
 VOCAB_SIZE = int(os.getenv("VOCAB_SIZE", 100_000))
 EMBED_DIM = int(os.getenv("EMBED_DIM", 300))
 LIMIT = int(os.getenv("LIMIT", 1_000_000_000))
+EPOCHS = int(os.getenv("EPOCHS", 1))
 
 
 def main(inpath: str):
@@ -56,7 +57,7 @@ def main(inpath: str):
         alpha=0.1,
         sg=1,
         sorted_vocab=1,
-        iter=10,
+        iter=EPOCHS,
         workers=8,
     )
     
