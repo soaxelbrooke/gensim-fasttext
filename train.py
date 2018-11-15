@@ -47,19 +47,6 @@ def jsonify_build_params() -> str:
     )
 
 
-def calculate_corpus(lines: List[str]) -> Tuple[str, Counter]:
-    regex = re.compile(REGEX_MATCH_PATTERN)
-    token_counts = Counter()
-    result_lines = []
-    for line in lines:
-        for sentence in sent_tokenize(line):
-            doc = regex.findall(line)
-            for token in doc:
-                token_counts[token] += 1
-            result_lines.append(" ".join(doc))
-    return "\n".join(result_lines), token_counts
-
-
 def build_corpus(inpath: str):
     print(f"Building corpus from {inpath}...")
     total_lines = int(subprocess.check_output(["wc", "-l", inpath]).split(b" ")[0])
@@ -96,32 +83,6 @@ def main():
     except:
         print("Failed to load token counts - did you `python train.py build-corpus $INFILE` yet?")
         sys.exit(1)
-
-    # corpus = []
-    # with open(inpath) as infile:
-    #     for idx, line in enumerate(tqdm(infile, desc="Loading corpus", total=total_lines)):
-    #         if idx >= LIMIT:
-    #             break
-    #         for sentence in sent_tokenize(line):
-    #             doc = regex.findall(sentence)
-    #             corpus.append(doc)
-    #             for token in doc:
-    #                 token_counts[token] += 1
-
-    # total_lines = int(subprocess.check_output(['wc', '-l', inpath]).split(b' ')[0])
-    # corpus = []
-    # token_counts = Counter()
-    # # pool = Pool(NUM_WORKERS)
-    # with open(inpath) as infile:
-    #     lines = (line.strip() for line in infile)
-    #     batches = toolz.partition_all(10000, lines)
-    #     total_batches = int(total_lines / 10000) + 1
-    #     for batch_corpus, batch_token_counts in tqdm(map(calculate_corpus, batches), total=total_batches):
-    #         # print(f"Processing batch corpus of {len(batch_corpus)} sentences and {sum(batch_token_counts.values())} words.")
-    #         with open('corpus.tmp', 'a') as corpusfile:
-    #             corpusfile.write(batch_corpus)
-    #         token_counts += batch_token_counts
-    #         # print(f"Counted {len(token_counts)} unique tokens so far...")
 
     if os.path.exists("vectors_out.sqlite"):
         os.unlink("vectors_out.sqlite")
@@ -170,7 +131,6 @@ def main():
         try:
             vector = ft_model.wv.get_vector(token)
         except:
-            # print("Model miss on " + token)
             continue
         vectors[token] = vector
         vocab[token] = idx
@@ -188,10 +148,6 @@ def main():
         json.dump(vocab, outfile)
     print("Writing vectors_out.sqlite...")
     conn.commit()
-    # print("Writing embeddings_out.txt...")
-    # pandas.DataFrame.from_dict(vectors, orient="index").to_csv(
-    #     "embeddings_out.txt", header=None, sep=" ", quoting=csv.QUOTE_NONE
-    # )
     print("Done!")
 
 
