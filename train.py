@@ -26,6 +26,7 @@ LEARNING_RATE = float(os.getenv("LEARNING_RATE", 0.1))
 MIN_LEARNING_RATE = float(os.getenv("MIN_LEARNING_RATE", 0.0001))
 NUM_WORKERS = int(os.getenv("NUM_WORKERS", 8))
 NEGATIVE_SAMPLES = int(os.getenv("NEGATIVE_SAMPLES", 10))
+NEG_SAMP_DIST = float(os.getenv("NEG_SAMP_DIST", 0.75))
 
 
 def jsonify_build_params() -> str:
@@ -157,6 +158,7 @@ def main():
         iter=EPOCHS,
         workers=NUM_WORKERS,
         negative=NEGATIVE_SAMPLES,
+        ns_exponent=NEG_SAMP_DIST,
     )
 
     vectors = {}
