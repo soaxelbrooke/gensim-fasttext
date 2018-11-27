@@ -27,6 +27,7 @@ MIN_LEARNING_RATE = float(os.getenv("MIN_LEARNING_RATE", 0.0001))
 NUM_WORKERS = int(os.getenv("NUM_WORKERS", 8))
 NEGATIVE_SAMPLES = int(os.getenv("NEGATIVE_SAMPLES", 10))
 NEG_SAMP_DIST = float(os.getenv("NEG_SAMP_DIST", 0.75))
+OOV_TOKEN = os.getenv("OOV_TOKEN", "__oov__")
 
 
 def jsonify_build_params() -> str:
@@ -94,13 +95,14 @@ def main():
             vector_float_bytes integer, 
             embedding_dimensions integer,
             vocab_size integer,
+            oov_token text,
             build_parameters text
         )
     """
     )
     conn.execute(
-        "INSERT INTO vector_meta VALUES (?, ?, ?, ?)",
-        ("float32", EMBED_DIM, VOCAB_SIZE, jsonify_build_params()),
+        "INSERT INTO vector_meta VALUES (?, ?, ?, ?, ?)",
+        ("float32", EMBED_DIM, VOCAB_SIZE, OOV_TOKEN, jsonify_build_params()),
     )
     conn.execute("CREATE TABLE vectors (token text primary key, vector_bytes blob);")
     conn.execute("CREATE TABLE frequencies (token text primary key, count integer);")
@@ -127,9 +129,9 @@ def main():
     sorted_counts = sorted(token_counts.items(), key=lambda p: -p[1])
     idx = 2
     progress = tqdm(desc="Writing Vectors", total=VOCAB_SIZE)
-    oov_vector = ft_model.wv['__oov__']
-    conn.execute("INSERT INTO vectors VALUES (?, ?)", ("__oov__", oov_vector))
-    conn.execute("INSERT INTO frequencies VALUES (?, ?)", ("__oov__", 0))
+    oov_vector = ft_model.wv[OOV_TOKEN]
+    conn.execute("INSERT INTO vectors VALUES (?, ?)", (OOV_TOKEN, oov_vector))
+    conn.execute("INSERT INTO frequencies VALUES (?, ?)", (OOV_TOKEN, 0))
     for token, count in sorted_counts:
         try:
             vector = ft_model.wv.get_vector(token)
