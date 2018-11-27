@@ -127,6 +127,9 @@ def main():
     sorted_counts = sorted(token_counts.items(), key=lambda p: -p[1])
     idx = 2
     progress = tqdm(desc="Writing Vectors", total=VOCAB_SIZE)
+    oov_vector = ft_model.wv['__oov__']
+    conn.execute("INSERT INTO vectors VALUES (?, ?)", ("__oov__", oov_vector))
+    conn.execute("INSERT INTO frequencies VALUES (?, ?)", ("__oov__", 0))
     for token, count in sorted_counts:
         try:
             vector = ft_model.wv.get_vector(token)
@@ -142,12 +145,12 @@ def main():
         if idx >= VOCAB_SIZE:
             break
 
+    print("Writing vectors_out.sqlite...")
+    conn.commit()
     progress.close()
     print("Writing vocab.json...")
     with open("vocab.json", "w") as outfile:
         json.dump(vocab, outfile)
-    print("Writing vectors_out.sqlite...")
-    conn.commit()
     print("Done!")
 
 
