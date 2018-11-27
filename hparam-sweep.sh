@@ -6,7 +6,8 @@ for EPOCHS in 5 50 100; do
             export OUTDIR="out/e${EPOCHS}_wl${WINDOW_LEN}_nsd${NEG_SAMP_DIST}"
             echo "Training vectors with epochs=$EPOCHS, window length=$WINDOW_LEN, neg sampling exponent=$NEG_SAMP_DIST..."
             time python3 train.py train
-            mv vectors_out.sqlite out/$OUTDIR/vectors.sqlite
+	    mkdir -p $OUTDIR
+            mv vectors_out.sqlite $OUTDIR/vectors.sqlite
         done
     done
 done
